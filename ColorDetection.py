@@ -66,8 +66,8 @@ class ColorDetector(QDialog):
         v = color.getHsv()[2]
 
         self.h_min.setValue(h - 5)
-        self.s_min.setValue(0)
-        self.v_min.setValue(0)
+        self.s_min.setValue(s)
+        self.v_min.setValue(255 - v)
 
         self.h_max.setValue(h + 5)
         self.s_max.setValue(255)
