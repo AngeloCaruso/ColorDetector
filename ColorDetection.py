@@ -30,7 +30,7 @@ class ColorDetector(QDialog):
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
 
         self.timerVideo = QTimer(self)
-        self.timerVideo.timeout.connect(self.update_frame)
+        self.timerVideo.timeout.connect(self.update_frame_video)
         self.timerVideo.start(5)
 
     def stop_webcam(self):
@@ -81,7 +81,8 @@ class ColorDetector(QDialog):
         # lower = {'red':(166, 84, 141), 'green':(66, 122, 129), 'blue':(97, 100, 117), 'yellow':(23, 59, 119), 'orange':(0, 50, 80)} #assign new item lower['blue'] = (93, 10, 0)
         # upper = {'red':(186,255,255), 'green':(86,255,255), 'blue':(117,255,255), 'yellow':(54,255,255), 'orange':(20,255,255)}
 
-        hsv = cv2.cvtColor(self.image, cv2.COLOR_BGR2HSV)
+        blurred = cv2.blur(self.image, (7, 7))
+        hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
         color_lower = np.array([self.h_min.value(), self.s_min.value(), self.v_min.value()], np.uint8)
         color_upper = np.array([self.h_max.value(), self.s_max.value(), self.v_max.value()], np.uint8)
@@ -89,7 +90,16 @@ class ColorDetector(QDialog):
         self.current_value.setText('Current Value -> Min :' + str(color_lower) + ' Max: ' + str(color_upper))
 
         mask = cv2.inRange(hsv, color_lower, color_upper)
-        color_mask = cv2.bitwise_and(self.image, self.image, mask  = mask)
+        dilate = cv2.getStructuringElement(cv2.MORPH_RECT, (24, 24))
+        erode = cv2.getStructuringElement(cv2.MORPH_RECT, (12, 12))
+
+        color_mask = cv2.erode(mask, erode)
+        color_mask = cv2.erode(mask, erode)
+
+        color_mask = cv2.dilate(mask, dilate)
+        color_mask = cv2.dilate(mask, dilate)
+
+        color_mask = cv2.bitwise_and(self.image, self.image, mask=mask)
         self.displayImage(color_mask, 2)
 
     def update_frame_img(self):
@@ -98,7 +108,8 @@ class ColorDetector(QDialog):
         # lower = {'red':(166, 84, 141), 'green':(66, 122, 129), 'blue':(97, 100, 117), 'yellow':(23, 59, 119), 'orange':(0, 50, 80)} #assign new item lower['blue'] = (93, 10, 0)
         # upper = {'red':(186,255,255), 'green':(86,255,255), 'blue':(117,255,255), 'yellow':(54,255,255), 'orange':(20,255,255)}
 
-        hsv = cv2.cvtColor(self.image, cv2.COLOR_BGR2HSV)
+        blurred = cv2.blur(self.image, (7, 7))
+        hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
         color_lower = np.array([self.h_min.value(), self.s_min.value(), self.v_min.value()], np.uint8)
         color_upper = np.array([self.h_max.value(), self.s_max.value(), self.v_max.value()], np.uint8)
@@ -106,7 +117,16 @@ class ColorDetector(QDialog):
         self.current_value.setText('Current Value -> Min :' + str(color_lower) + ' Max: ' + str(color_upper))
 
         mask = cv2.inRange(hsv, color_lower, color_upper)
-        color_mask = cv2.bitwise_and(self.image, self.image, mask  = mask)
+        dilate = cv2.getStructuringElement(cv2.MORPH_RECT, (24, 24))
+        erode = cv2.getStructuringElement(cv2.MORPH_RECT, (12, 12))
+
+        color_mask = cv2.erode(mask, erode)
+        color_mask = cv2.erode(mask, erode)
+
+        color_mask = cv2.dilate(mask, dilate)
+        color_mask = cv2.dilate(mask, dilate)
+
+        color_mask = cv2.bitwise_and(self.image, self.image, mask=mask)
         self.displayImage(color_mask, 2)
 
     def displayImage(self, img, window=1):
